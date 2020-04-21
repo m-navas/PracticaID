@@ -119,6 +119,7 @@ public class MainActivity extends Activity {
                     .setVisibility(View.GONE);
         }
 
+        // Si el usuario no ha configurado el bloqueo de pantalla o la huella
         if (!keyguardManager.isKeyguardSecure()) {
             // Show a message that the user hasn't set up a fingerprint or lock screen.
             Toast.makeText(this,
@@ -134,6 +135,7 @@ public class MainActivity extends Activity {
         // See http://developer.android.com/reference/android/Manifest.permission.html#USE_FINGERPRINT
         // The line below prevents the false positive inspection from Android Studio
         // noinspection ResourceType
+        // Si no hay huella registrada en el dispositivo
         if (!fingerprintManager.hasEnrolledFingerprints()) {
             purchaseButton.setEnabled(false);
             // This happens when no fingerprints are registered.

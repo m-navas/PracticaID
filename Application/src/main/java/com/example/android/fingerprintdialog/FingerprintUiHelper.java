@@ -96,8 +96,17 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
 
     @Override
     public void onAuthenticationFailed() {
-        showError(mIcon.getResources().getString(
-                R.string.fingerprint_not_recognized));
+        /*showError(mIcon.getResources().getString(
+                R.string.fingerprint_not_recognized));*/
+        if (!mSelfCancelled) {
+            showError("Fingerprint not recognized");
+            mIcon.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onError();
+                }
+            }, ERROR_TIMEOUT_MILLIS);
+        }
     }
 
     @Override
