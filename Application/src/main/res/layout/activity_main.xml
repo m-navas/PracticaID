@@ -31,7 +31,7 @@
                 android:layout_marginBottom="32dp"
                 android:layout_gravity="center_horizontal"
                 android:scaleType="fitCenter"
-                android:src="@drawable/android_robot"
+                android:src="@drawable/fingerprint"
                 android:contentDescription="@string/description_bugdroid_icon"/>
 
         <LinearLayout
@@ -71,23 +71,23 @@
 
         </LinearLayout>
         <Button style="@android:style/Widget.Material.Button.Colored"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 android:layout_gravity="end"
                 android:textColor="?android:attr/textColorPrimaryInverse"
-                android:text="@string/purchase"
+                android:text="@string/propietario"
                 android:id="@+id/purchase_button" />
 
         <Button style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="4dp"
             android:layout_gravity="end"
             android:textColor="?android:attr/textColorPrimaryInverse"
-            android:text="@string/purchase_not_invalidated"
+            android:text="@string/usuario_ext"
             android:id="@+id/purchase_button_not_invalidated" />
 
         <TextView
