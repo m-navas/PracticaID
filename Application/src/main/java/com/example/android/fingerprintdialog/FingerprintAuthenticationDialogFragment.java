@@ -83,6 +83,8 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         });
 
         mSecondDialogButton = (Button) v.findViewById(R.id.second_dialog_button);
+        mSecondDialogButton.setEnabled(false);
+        mSecondDialogButton.setVisibility(View.GONE);
         mSecondDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -242,6 +244,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 
     @Override
     public void onAuthenticated() {
+        // Huella reconocida!
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.
         mActivity.onPurchased(true /* withFingerprint */, mCryptoObject);
@@ -250,6 +253,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 
     @Override
     public void onError() {
+        // Huella no reconocida!
         //goToBackup();
         //Toast.makeText(MainActivity.class, "Error", Toast.LENGTH_LONG).show();
         mFingerprintUiHelper.stopListening();
