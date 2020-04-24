@@ -99,7 +99,7 @@
             android:textColor="?android:attr/textColorPrimaryInverse"
             android:background="@color/boton"
             android:text="@string/datos_rendimiento"
-            android:id="@+id/datos_rendimiento" />
+            android:id="@+id/btn_datos_rendimiento" />
 
         <Button style="@android:style/Widget.Material.Button"
             android:layout_width="fill_parent"

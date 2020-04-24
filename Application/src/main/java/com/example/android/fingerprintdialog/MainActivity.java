@@ -21,8 +21,10 @@ import android.app.KeyguardManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Region;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +42,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.fingerprintdialog.entidades.Registro;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -50,6 +54,7 @@ import java.security.NoSuchProviderException;
 import java.security.Timestamp;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -74,10 +79,10 @@ public class MainActivity extends Activity {
     private KeyGenerator mKeyGenerator;
     private SharedPreferences mSharedPreferences;
 
-    private long totalIntentos;
-    private Integer numFP;
-    private Integer numFN;
-    private Integer numErroresAdq;
+    public static float totalIntentos;
+    public static float numFP;
+    public static float numFN;
+    public static float numErroresAdq;
 
     public static Boolean usuario = null; // true: propietario; false: externo
     ConexionSQLiteHelper conn = null;
@@ -87,8 +92,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "bd_registros", null, 1);
+        conn = new ConexionSQLiteHelper(this, "bd_registros", null, 1);
         Utilidades.log("Hola mundo");
+
+        consultarRegistros();
 
         try {
             mKeyStore = KeyStore.getInstance("AndroidKeyStore");
@@ -178,6 +185,52 @@ public class MainActivity extends Activity {
                 limpiarDB();
             }
         });
+
+        Button btn_datos_rendimiento = (Button)findViewById(R.id.btn_datos_rendimiento);
+        btn_datos_rendimiento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mostrarDatosRendimiento();
+            }
+        });
+    }
+
+    private void consultarRegistros() {
+        SQLiteDatabase db = conn.getReadableDatabase();
+
+        Registro registro = null;
+        ArrayList<Registro> listaRegistros = new ArrayList<>();
+
+        // select * from registros
+        Cursor cursor = db.rawQuery("SELECT * FROM "+Utilidades.TABLA_REGISTROS, null);
+
+        while(cursor.moveToNext()){
+            registro = new Registro(cursor.getString(0), cursor.getInt(1) > 0, cursor.getInt(2) > 0, cursor.getInt(3) > 0, cursor.getLong(4));
+
+            listaRegistros.add(registro);
+        }
+
+        totalIntentos = 0;
+        numFN = 0;
+        numFP = 0;
+        numErroresAdq = 0;
+
+        for(Registro r: listaRegistros){
+            totalIntentos++;
+            if(r.getFp())
+                numFP++;
+            if(r.getFn())
+                numFN++;
+            if(r.getError())
+                numErroresAdq++;
+        }
+
+        Utilidades.log("Init data: " + totalIntentos + " " + numFN + " " + numFP + " " + numErroresAdq);
+    }
+
+    private void mostrarDatosRendimiento(){
+        Intent i = new Intent(this, DatosRendimiento.class);
+        startActivity(i);
     }
 
     private void limpiarDB() {
@@ -269,13 +322,21 @@ public class MainActivity extends Activity {
         //String ts = tsLong.toString();
         if(usuario){
             user = "propietario";
-            if(!resultado || error)
+            if(!resultado || error) {
                 _fn = true;
+                numFN++;
+            }
         }else{
             user = "externo";
-            if(resultado)
+            if(resultado) {
                 _fp = true;
+                numFP++;
+            }
         }
+
+        if(error)
+            numErroresAdq++;
+
 
         // Añadir nuevo registro en la bd
         conn = new ConexionSQLiteHelper(this, "bd_registros", null, 1);
