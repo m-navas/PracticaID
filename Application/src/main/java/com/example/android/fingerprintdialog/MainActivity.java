@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -189,11 +190,52 @@ public class MainActivity extends Activity {
             // If the user has authenticated with fingerprint, verify that using cryptography and
             // then show the confirmation message.
             assert cryptoObject != null;
-            tryEncrypt(cryptoObject.getCipher());
+            tryEncrypt(cryptoObject.getCipher(), true);
         } else {
             // Authentication happened with backup password. Just show the confirmation message.
             showConfirmation(null);
         }
+    }
+
+    public void resultadoAutenticacion(boolean withFingerprint,
+                                       @Nullable FingerprintManager.CryptoObject cryptoObject, boolean resultado) {
+        if (withFingerprint) {
+            // If the user has authenticated with fingerprint, verify that using cryptography and
+            // then show the confirmation message.
+            //assert cryptoObject != null;
+            if(cryptoObject != null){
+                tryEncrypt(cryptoObject.getCipher(), resultado);
+            }else{
+                mostrarResultado(null, resultado);
+            }
+        } else {
+            // Authentication happened with backup password. Just show the confirmation message.
+            //showConfirmation(null);
+            Toast.makeText(this, "Error de adquisición", Toast.LENGTH_LONG).show();
+            mostrarResultado(null, resultado);
+        }
+    }
+
+    // Show confirmation, if fingerprint was used show crypto information.
+    private void mostrarResultado(byte[] encrypted, boolean resultado) {
+        final TextView confirmation_mess = (TextView)findViewById(R.id.confirmation_message);
+        if(resultado){
+            confirmation_mess.setText("Usuario identificado con éxito. Nuevo registro añadido.");
+            confirmation_mess.setTextColor(Color.GREEN);
+            confirmation_mess.setVisibility(View.VISIBLE);
+        }else{
+            confirmation_mess.setText("Error en la identificación. Nuevo registro añadido");
+            confirmation_mess.setTextColor(Color.RED);
+            confirmation_mess.setVisibility(View.VISIBLE);
+        }
+
+        confirmation_mess.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                confirmation_mess.setVisibility(View.GONE);
+            }
+        }, Utilidades.NOTIFICATION_TIMEOUT_MILLIS);
+
     }
 
     // Show confirmation, if fingerprint was used show crypto information.
@@ -210,10 +252,11 @@ public class MainActivity extends Activity {
      * Tries to encrypt some data with the generated key in {@link #createKey} which is
      * only works if the user has just authenticated via fingerprint.
      */
-    private void tryEncrypt(Cipher cipher) {
+    private void tryEncrypt(Cipher cipher, boolean resultado) {
         try {
             byte[] encrypted = cipher.doFinal(SECRET_MESSAGE.getBytes());
-            showConfirmation(encrypted);
+            //showConfirmation(encrypted);
+            mostrarResultado(encrypted, resultado);
         } catch (BadPaddingException | IllegalBlockSizeException e) {
             Toast.makeText(this, "Failed to encrypt the data with the generated key. "
                     + "Retry the purchase", Toast.LENGTH_LONG).show();
