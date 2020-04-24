@@ -32,6 +32,10 @@
     <string name="password_description">Enter your store password to continue</string>
     <string name="propietario">Propietario</string>
     <string name="usuario_ext">Usuario externo</string>
+    <string name="datos_rendimiento">Datos de rendimiento</string>
+    <string name="borrar_registro">Borrar ultimo registro</string>
+    <string name="limpiar_db">Limpiar datos</string>
+    <string name="descripcion">Seleccione una opción para comenzar la prueba</string>
     <string name="purchase_button_not_invalidated_description">
         You can proceed to purchase with this button \n even if a new fingerprint is enrolled
     </string>

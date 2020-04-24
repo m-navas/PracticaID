@@ -90,14 +90,48 @@
             android:text="@string/usuario_ext"
             android:id="@+id/purchase_button_not_invalidated" />
 
+        <Button style="@android:style/Widget.Material.Button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_gravity="end"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:background="@color/boton"
+            android:text="@string/datos_rendimiento"
+            android:id="@+id/datos_rendimiento" />
+
+        <Button style="@android:style/Widget.Material.Button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_gravity="end"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:background="@color/alert"
+            android:text="@string/borrar_registro"
+            android:id="@+id/eliminar_ultimo_registro" />
+
+        <Button style="@android:style/Widget.Material.Button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_gravity="end"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:background="@color/red"
+            android:text="@string/limpiar_db"
+            android:id="@+id/limpiar_db" />
+
         <TextView
             android:id="@+id/purchase_button_not_invalidated_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:gravity="end"
+            android:gravity="left"
             android:textAlignment="gravity"
-            android:text="@string/purchase_button_not_invalidated_description"
+            android:text="@string/descripcion"
+            android:visibility="gone"
             />
 
         <TextView

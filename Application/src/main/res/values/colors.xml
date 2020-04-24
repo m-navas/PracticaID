@@ -16,6 +16,9 @@
   -->
 <resources>
     <color name="warning_color">#f4511e</color>
+    <color name="alert">#E77C17</color>
     <color name="hint_color">#42000000</color>
     <color name="success_color">#009688</color>
+    <color name="boton">#0141F9</color>
+    <color name="red">#F90101</color>
 </resources>
