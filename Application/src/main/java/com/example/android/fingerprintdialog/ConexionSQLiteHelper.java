@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 
 public class ConexionSQLiteHelper extends SQLiteOpenHelper {
 
-    final String CREAR_TABLA_REGISTROS="CREATE TABLE registros (tipoUsuario TEXT, fn BOOLEAN, fp BOOLEAN, error BOOLEAN, timestamp INTEGER";
+
 
     public ConexionSQLiteHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -15,7 +15,7 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(CREAR_TABLA_REGISTROS);
+        sqLiteDatabase.execSQL(Utilidades.CREAR_TABLA_REGISTROS);
     }
 
     @Override

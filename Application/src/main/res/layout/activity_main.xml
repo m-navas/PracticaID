@@ -110,7 +110,7 @@
             android:textColor="?android:attr/textColorPrimaryInverse"
             android:background="@color/alert"
             android:text="@string/borrar_registro"
-            android:id="@+id/eliminar_ultimo_registro" />
+            android:id="@+id/btn_eliminar_ultimo_registro" />
 
         <Button style="@android:style/Widget.Material.Button"
             android:layout_width="fill_parent"
@@ -121,7 +121,7 @@
             android:textColor="?android:attr/textColorPrimaryInverse"
             android:background="@color/red"
             android:text="@string/limpiar_db"
-            android:id="@+id/limpiar_db" />
+            android:id="@+id/btn_limpiar_db" />
 
         <TextView
             android:id="@+id/purchase_button_not_invalidated_description"

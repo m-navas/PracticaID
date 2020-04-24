@@ -18,8 +18,10 @@ package com.example.android.fingerprintdialog;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
@@ -45,6 +47,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Timestamp;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
@@ -71,14 +74,20 @@ public class MainActivity extends Activity {
     private KeyGenerator mKeyGenerator;
     private SharedPreferences mSharedPreferences;
 
+    private long totalIntentos;
+    private Integer numFP;
+    private Integer numFN;
+    private Integer numErroresAdq;
+
     public static Boolean usuario = null; // true: propietario; false: externo
+    ConexionSQLiteHelper conn = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "bd_registros", null, 1);
+        ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "bd_registros", null, 1);
         Utilidades.log("Hola mundo");
 
         try {
@@ -162,6 +171,20 @@ public class MainActivity extends Activity {
         btn_externo.setEnabled(true);
         btn_externo.setOnClickListener(new PurchaseButtonClickListener(defaultCipher, DEFAULT_KEY_NAME, false));
 
+        Button btn_limpiarbd = (Button)findViewById(R.id.btn_limpiar_db);
+        btn_limpiarbd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                limpiarDB();
+            }
+        });
+    }
+
+    private void limpiarDB() {
+        SQLiteDatabase db = conn.getWritableDatabase();
+        db.delete(Utilidades.TABLA_REGISTROS, null, null);
+        //db.execSQL("DROP TABLE IF EXISTS "+Utilidades.TABLA_REGISTROS);
+        Utilidades.log("Tabla registros eliminada");
     }
 
     /**
@@ -240,7 +263,33 @@ public class MainActivity extends Activity {
     }
 
     private void nuevoRegistroDB(boolean resultado, boolean error) {
+        String user;
+        Boolean _fn = false, _fp = false;
+        Long ts = System.currentTimeMillis()/1000;
+        //String ts = tsLong.toString();
+        if(usuario){
+            user = "propietario";
+            if(!resultado || error)
+                _fn = true;
+        }else{
+            user = "externo";
+            if(resultado)
+                _fp = true;
+        }
+
         // Añadir nuevo registro en la bd
+        conn = new ConexionSQLiteHelper(this, "bd_registros", null, 1);
+        SQLiteDatabase db = conn.getWritableDatabase();
+
+        ContentValues nuevoRegistro = new ContentValues();
+        nuevoRegistro.put(Utilidades.CAMPO_USUARIO, user);
+        nuevoRegistro.put(Utilidades.CAMPO_FN, _fn);
+        nuevoRegistro.put(Utilidades.CAMPO_FP, _fp);
+        nuevoRegistro.put(Utilidades.CAMPO_ERROR, error);
+        nuevoRegistro.put(Utilidades.CAMPO_TIMESTAMP, ts);
+
+        totalIntentos = db.insert(Utilidades.TABLA_REGISTROS, Utilidades.CAMPO_TIMESTAMP, nuevoRegistro);
+        Utilidades.log("Nuevo registro añadido. Total registros: "+totalIntentos);
     }
 
     // Show confirmation, if fingerprint was used show crypto information.
