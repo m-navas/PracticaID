@@ -247,6 +247,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         // Huella reconocida!
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.
+        Utilidades.log("Huella reconocida!");
         mActivity.onPurchased(true /* withFingerprint */, mCryptoObject);
         dismiss();
     }
@@ -256,7 +257,15 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         // Huella no reconocida!
         //goToBackup();
         //Toast.makeText(MainActivity.class, "Error", Toast.LENGTH_LONG).show();
+        Utilidades.log("Huella no reconocida!");
         mFingerprintUiHelper.stopListening();
+        dismiss();
+    }
+
+    @Override
+    public void onAcquisitionError(){
+        // Error de adquisición FTA!
+        Utilidades.log("Error de adquisición!");
         dismiss();
     }
 

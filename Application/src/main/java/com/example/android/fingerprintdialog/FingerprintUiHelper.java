@@ -79,11 +79,11 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     @Override
     public void onAuthenticationError(int errMsgId, CharSequence errString) {
         if (!mSelfCancelled) {
-            showError(errString);
+            showError(Utilidades.errorAdq);
             mIcon.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onError();
+                    mCallback.onAcquisitionError();
                 }
             }, ERROR_TIMEOUT_MILLIS);
         }
@@ -91,7 +91,16 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
 
     @Override
     public void onAuthenticationHelp(int helpMsgId, CharSequence helpString) {
-        showError(helpString);
+        //showError(helpString);
+        if (!mSelfCancelled) {
+            showError(Utilidades.errorAdq);
+            mIcon.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onAcquisitionError();
+                }
+            }, ERROR_TIMEOUT_MILLIS);
+        }
     }
 
     @Override
@@ -99,7 +108,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         /*showError(mIcon.getResources().getString(
                 R.string.fingerprint_not_recognized));*/
         if (!mSelfCancelled) {
-            showError("Fingerprint not recognized");
+            showError(Utilidades.rechazo);
             mIcon.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -116,7 +125,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         mErrorTextView.setTextColor(
                 mErrorTextView.getResources().getColor(R.color.success_color, null));
         mErrorTextView.setText(
-                mErrorTextView.getResources().getString(R.string.fingerprint_success));
+                Utilidades.autenticacion);
         mIcon.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -150,5 +159,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         void onAuthenticated();
 
         void onError();
+
+        void onAcquisitionError();
     }
 }

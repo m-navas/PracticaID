@@ -75,6 +75,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "bd_registros", null, 1);
+        Utilidades.log("Hola mundo");
+
         try {
             mKeyStore = KeyStore.getInstance("AndroidKeyStore");
         } catch (KeyStoreException e) {
