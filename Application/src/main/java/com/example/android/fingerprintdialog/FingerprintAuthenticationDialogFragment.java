@@ -249,7 +249,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         // successful.
         Utilidades.log("Huella reconocida!");
         //mActivity.onPurchased(true /* withFingerprint */, mCryptoObject);
-        mActivity.resultadoAutenticacion(true, mCryptoObject, true);
+        mActivity.resultadoAutenticacion(true, mCryptoObject, true, false);
         dismiss();
     }
 
@@ -260,7 +260,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         //Toast.makeText(MainActivity.class, "Error", Toast.LENGTH_LONG).show();
         Utilidades.log("Huella no reconocida!");
         mFingerprintUiHelper.stopListening();
-        mActivity.resultadoAutenticacion(true, null, false);
+        mActivity.resultadoAutenticacion(true, null, false, false);
         dismiss();
     }
 
@@ -268,7 +268,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
     public void onAcquisitionError(){
         // Error de adquisición FTA!
         Utilidades.log("Error de adquisición!");
-        mActivity.resultadoAutenticacion(false, null, false);
+        mActivity.resultadoAutenticacion(false, null, false, true);
         dismiss();
     }
 

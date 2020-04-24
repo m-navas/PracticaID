@@ -71,6 +71,8 @@ public class MainActivity extends Activity {
     private KeyGenerator mKeyGenerator;
     private SharedPreferences mSharedPreferences;
 
+    public static Boolean usuario = null; // true: propietario; false: externo
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +108,9 @@ public class MainActivity extends Activity {
 
         KeyguardManager keyguardManager = getSystemService(KeyguardManager.class);
         FingerprintManager fingerprintManager = getSystemService(FingerprintManager.class);
-        Button purchaseButton = (Button) findViewById(R.id.purchase_button);
+        Button btn_propietario = (Button) findViewById(R.id.purchase_button);
+        Button btn_externo = (Button) findViewById(R.id.purchase_button_not_invalidated);
+
         Button purchaseButtonNotInvalidated = (Button) findViewById(
                 R.id.purchase_button_not_invalidated);
 
@@ -114,7 +118,7 @@ public class MainActivity extends Activity {
             purchaseButtonNotInvalidated.setEnabled(true);
             purchaseButtonNotInvalidated.setOnClickListener(
                     new PurchaseButtonClickListener(cipherNotInvalidated,
-                            KEY_NAME_NOT_INVALIDATED));
+                            KEY_NAME_NOT_INVALIDATED, false));
         } else {
             // Hide the purchase button which uses a non-invalidated key
             // if the app doesn't work on Android N preview
@@ -130,7 +134,8 @@ public class MainActivity extends Activity {
                     "Secure lock screen hasn't set up.\n"
                             + "Go to 'Settings -> Security -> Fingerprint' to set up a fingerprint",
                     Toast.LENGTH_LONG).show();
-            purchaseButton.setEnabled(false);
+            btn_propietario.setEnabled(false);
+            btn_externo.setEnabled(false);
             purchaseButtonNotInvalidated.setEnabled(false);
             return;
         }
@@ -141,7 +146,8 @@ public class MainActivity extends Activity {
         // noinspection ResourceType
         // Si no hay huella registrada en el dispositivo
         if (!fingerprintManager.hasEnrolledFingerprints()) {
-            purchaseButton.setEnabled(false);
+            btn_propietario.setEnabled(false);
+            btn_externo.setEnabled(false);
             // This happens when no fingerprints are registered.
             Toast.makeText(this,
                     "Go to 'Settings -> Security -> Fingerprint' and register at least one fingerprint",
@@ -150,9 +156,12 @@ public class MainActivity extends Activity {
         }
         createKey(DEFAULT_KEY_NAME, true);
         createKey(KEY_NAME_NOT_INVALIDATED, false);
-        purchaseButton.setEnabled(true);
-        purchaseButton.setOnClickListener(
-                new PurchaseButtonClickListener(defaultCipher, DEFAULT_KEY_NAME));
+        btn_propietario.setEnabled(true);
+        btn_propietario.setOnClickListener(
+                new PurchaseButtonClickListener(defaultCipher, DEFAULT_KEY_NAME, true));
+        btn_externo.setEnabled(true);
+        btn_externo.setOnClickListener(new PurchaseButtonClickListener(defaultCipher, DEFAULT_KEY_NAME, false));
+
     }
 
     /**
@@ -198,7 +207,21 @@ public class MainActivity extends Activity {
     }
 
     public void resultadoAutenticacion(boolean withFingerprint,
-                                       @Nullable FingerprintManager.CryptoObject cryptoObject, boolean resultado) {
+                                       @Nullable FingerprintManager.CryptoObject cryptoObject, boolean resultado, boolean error) {
+
+        nuevoRegistroDB(resultado, error);
+
+        if(usuario && !resultado){
+            if(!error){
+                Toast.makeText(this, "Falso Negativo", Toast.LENGTH_LONG).show();
+            }else
+                Toast.makeText(this, "Error de Adquisicion y Falso Negativo", Toast.LENGTH_LONG).show();
+        } else if (!usuario && resultado){
+            Toast.makeText(this, "Falso Positivo", Toast.LENGTH_LONG).show();
+        }else if(error){
+            Toast.makeText(this, "Error de adquisición", Toast.LENGTH_LONG).show();
+        }
+
         if (withFingerprint) {
             // If the user has authenticated with fingerprint, verify that using cryptography and
             // then show the confirmation message.
@@ -211,9 +234,13 @@ public class MainActivity extends Activity {
         } else {
             // Authentication happened with backup password. Just show the confirmation message.
             //showConfirmation(null);
-            Toast.makeText(this, "Error de adquisición", Toast.LENGTH_LONG).show();
+
             mostrarResultado(null, resultado);
         }
+    }
+
+    private void nuevoRegistroDB(boolean resultado, boolean error) {
+        // Añadir nuevo registro en la bd
     }
 
     // Show confirmation, if fingerprint was used show crypto information.
@@ -334,16 +361,20 @@ public class MainActivity extends Activity {
 
         Cipher mCipher;
         String mKeyName;
+        Boolean tipoUsuario;
 
-        PurchaseButtonClickListener(Cipher cipher, String keyName) {
+        PurchaseButtonClickListener(Cipher cipher, String keyName, Boolean tUsuario) {
             mCipher = cipher;
             mKeyName = keyName;
+            this.tipoUsuario = tUsuario;
         }
 
         @Override
         public void onClick(View view) {
             findViewById(R.id.confirmation_message).setVisibility(View.GONE);
             findViewById(R.id.encrypted_message).setVisibility(View.GONE);
+
+            MainActivity.usuario = tipoUsuario;
 
             // Set up the crypto object for later. The object will be authenticated by use
             // of the fingerprint.
