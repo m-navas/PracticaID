@@ -200,7 +200,11 @@ public class MainActivity extends Activity {
         btn_borrar_ultimo_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                borrarUltimoReg();
+                if(totalIntentos > 0)
+                    borrarUltimoReg();
+                else
+                    Toast.makeText(getApplicationContext(), "No hay registros", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -285,7 +289,7 @@ public class MainActivity extends Activity {
         //db.execSQL("DROP TABLE IF EXISTS "+Utilidades.TABLA_REGISTROS);
         Utilidades.log("Tabla registros eliminada");
         limpiarDatos();
-        Toast.makeText(this, "Todos los datos eliminados", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Todos los datos eliminados", Toast.LENGTH_SHORT).show();
         db.close();
     }
 
@@ -345,13 +349,13 @@ public class MainActivity extends Activity {
 
         if(usuario && !resultado){
             if(!error){
-                Toast.makeText(this, "Falso Negativo", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Falso Negativo", Toast.LENGTH_SHORT).show();
             }else
-                Toast.makeText(this, "Error de Adquisicion y Falso Negativo", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Error de Adquisicion y Falso Negativo", Toast.LENGTH_SHORT).show();
         } else if (!usuario && resultado){
-            Toast.makeText(this, "Falso Positivo", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Falso Positivo", Toast.LENGTH_SHORT).show();
         }else if(error){
-            Toast.makeText(this, "Error de adquisición", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error de adquisición", Toast.LENGTH_SHORT).show();
         }
 
         if (withFingerprint) {
@@ -405,7 +409,8 @@ public class MainActivity extends Activity {
         nuevoRegistro.put(Utilidades.CAMPO_ERROR, error);
         nuevoRegistro.put(Utilidades.CAMPO_TIMESTAMP, ts);
 
-        totalIntentos = db.insert(Utilidades.TABLA_REGISTROS, Utilidades.CAMPO_TIMESTAMP, nuevoRegistro);
+        db.insert(Utilidades.TABLA_REGISTROS, Utilidades.CAMPO_TIMESTAMP, nuevoRegistro);
+        totalIntentos++;
         Utilidades.log("Nuevo registro añadido. Total registros: "+totalIntentos);
     }
 

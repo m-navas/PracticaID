@@ -23,6 +23,7 @@ public class ListaRegistro extends AppCompatActivity {
 
     ArrayList<String> listaInformacion;
     ArrayList<Registro> listaRegistros;
+    ArrayAdapter adaptador;
 
     ConexionSQLiteHelper conn;
 
@@ -37,7 +38,7 @@ public class ListaRegistro extends AppCompatActivity {
 
         consultarListaRegistros();
 
-        ArrayAdapter adaptador = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listaInformacion);
+        adaptador = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listaInformacion);
 
         lv_registro.setAdapter(adaptador);
 
@@ -45,9 +46,52 @@ public class ListaRegistro extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String ts = listaRegistros.get(i).getTimestamp().toString();
-                Toast.makeText(getApplicationContext(), ts, Toast.LENGTH_SHORT).show();
+                borrarRegistro(ts);
+
             }
         });
+    }
+
+    private void borrarRegistro(String ts) {
+        SQLiteDatabase db = conn.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM "+ Utilidades.TABLA_REGISTROS +" WHERE "+Utilidades.CAMPO_TIMESTAMP+"=?", new String[]{ts});
+
+        if(cursor.moveToFirst()){
+            if(cursor.getInt(3) > 0)
+                MainActivity.numErroresAdq--;
+            if(cursor.getInt(1) > 0)
+                MainActivity.numFN--;
+            if(cursor.getInt(2) > 0)
+                MainActivity.numFP--;
+
+            MainActivity.totalIntentos--;
+
+            db.delete(Utilidades.TABLA_REGISTROS, Utilidades.CAMPO_TIMESTAMP+"=?", new String[]{ts});
+
+            String pattern = "dd/MM/yyyy hh:mm:ss";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+            String date = simpleDateFormat.format(new Date(Long.parseLong(ts)));
+
+            Toast.makeText(this, "Eliminado registro " + date, Toast.LENGTH_LONG).show();
+
+            actualizarListView(ts);
+
+        }
+
+        db.close();
+    }
+
+    private void actualizarListView(String ts) {
+        for(int i = 0; i < listaRegistros.size(); i++){
+            if(listaRegistros.get(i).getTimestamp().toString().equals(ts)){
+                listaInformacion.remove(i);
+                listaRegistros.remove(i);
+            }
+        }
+        adaptador.notifyDataSetChanged();
+        //lv_registro.invalidateViews();
     }
 
     private void consultarListaRegistros() {
