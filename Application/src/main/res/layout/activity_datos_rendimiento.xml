@@ -109,7 +109,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="20dp"
             android:text="FRR: "
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_far"
@@ -117,7 +118,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="20dp"
             android:text="FAR: "
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_fta"
@@ -125,6 +127,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="20dp"
             android:text="FTA: "
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

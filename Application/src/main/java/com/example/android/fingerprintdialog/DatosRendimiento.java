@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class DatosRendimiento extends AppCompatActivity {
 
     TextView tv_total, tv_numFP, tv_numFN, tv_numErr, tv_FRR, tv_FAR, tv_FTA;
@@ -38,6 +40,7 @@ public class DatosRendimiento extends AppCompatActivity {
     }
 
     private void actualizarDatos() {
+        DecimalFormat df = new DecimalFormat("#.00");
         fta = (float)(MainActivity.numErroresAdq / MainActivity.totalIntentos) * 100f;
         frr = (float)(MainActivity.numFN / MainActivity.totalIntentos) * 100f;
         far = (float)(MainActivity.numFP / MainActivity.totalIntentos) * 100f;
@@ -46,8 +49,15 @@ public class DatosRendimiento extends AppCompatActivity {
         tv_numFN.setText("Número de Falsos Negativos: "+(int)MainActivity.numFN);
         tv_numFP.setText("Número de Falsos Positivos: "+(int)MainActivity.numFP);
         tv_numErr.setText("Número de Errores de Adquisición: "+(int)MainActivity.numErroresAdq);
-        tv_FRR.setText("Tasa FRR: "+ frr +" %");
-        tv_FAR.setText("Tasa FAR: "+ far +" %");
-        tv_FTA.setText("Tasa FTA: "+ fta + " %");
+        if(MainActivity.totalIntentos == 0){
+            tv_FRR.setText("Tasa FRR: 0.00 %");
+            tv_FAR.setText("Tasa FAR: 0.00 %");
+            tv_FTA.setText("Tasa FTA: 0.00 %");
+        }else {
+            tv_FRR.setText("Tasa FRR: "+ (float)Math.round(frr * 100f) / 100f +" %");
+            tv_FAR.setText("Tasa FAR: "+ (float)Math.round(far * 100f) / 100f +" %");
+            tv_FTA.setText("Tasa FTA: "+ (float)Math.round(fta * 100f) / 100f + " %");
+        }
+
     }
 }

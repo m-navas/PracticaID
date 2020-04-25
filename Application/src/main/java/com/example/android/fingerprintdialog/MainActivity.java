@@ -54,7 +54,9 @@ import java.security.NoSuchProviderException;
 import java.security.Timestamp;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -193,6 +195,48 @@ public class MainActivity extends Activity {
                 mostrarDatosRendimiento();
             }
         });
+
+        Button btn_borrar_ultimo_reg = (Button)findViewById(R.id.btn_eliminar_ultimo_registro);
+        btn_borrar_ultimo_reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                borrarUltimoReg();
+            }
+        });
+    }
+
+    private void borrarUltimoReg() {
+        SQLiteDatabase db = conn.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM "+Utilidades.TABLA_REGISTROS, null);
+
+        cursor.moveToLast();
+        Registro ultimo = new Registro(cursor.getString(0), cursor.getInt(1) > 0, cursor.getInt(2) > 0, cursor.getInt(3) > 0, cursor.getLong(4));
+        String ts = cursor.getString(4);
+        Utilidades.log("ts: "+ts);
+        String[] parametros={ts};
+
+        db.delete(Utilidades.TABLA_REGISTROS, Utilidades.CAMPO_TIMESTAMP+"=?", parametros);
+
+        if(ultimo.getError())
+            numErroresAdq--;
+        if(ultimo.getFn())
+            numFN--;
+        if(ultimo.getFp())
+            numFP--;
+        totalIntentos--;
+
+
+
+        String pattern = "dd/MM/yyyy hh:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+        String date = simpleDateFormat.format(new Date(Long.parseLong(ts)));
+
+        Toast.makeText(this, "Eliminado registro " + date, Toast.LENGTH_LONG).show();
+
+        db.close();
+
     }
 
     private void consultarRegistros() {
@@ -226,6 +270,8 @@ public class MainActivity extends Activity {
         }
 
         Utilidades.log("Init data: " + totalIntentos + " " + numFN + " " + numFP + " " + numErroresAdq);
+
+        db.close();
     }
 
     private void mostrarDatosRendimiento(){
@@ -238,6 +284,16 @@ public class MainActivity extends Activity {
         db.delete(Utilidades.TABLA_REGISTROS, null, null);
         //db.execSQL("DROP TABLE IF EXISTS "+Utilidades.TABLA_REGISTROS);
         Utilidades.log("Tabla registros eliminada");
+        limpiarDatos();
+        Toast.makeText(this, "Todos los datos eliminados", Toast.LENGTH_LONG).show();
+        db.close();
+    }
+
+    private void limpiarDatos() {
+        totalIntentos = 0;
+        numFN = 0;
+        numFP = 0;
+        numErroresAdq = 0;
     }
 
     /**
@@ -318,7 +374,7 @@ public class MainActivity extends Activity {
     private void nuevoRegistroDB(boolean resultado, boolean error) {
         String user;
         Boolean _fn = false, _fp = false;
-        Long ts = System.currentTimeMillis()/1000;
+        Long ts = System.currentTimeMillis();
         //String ts = tsLong.toString();
         if(usuario){
             user = "propietario";
