@@ -38,6 +38,9 @@ public class ListaRegistro extends AppCompatActivity {
 
         consultarListaRegistros();
 
+        if(listaRegistros.isEmpty())
+            Toast.makeText(getApplicationContext(), "No hay datos", Toast.LENGTH_SHORT).show();
+
         adaptador = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listaInformacion);
 
         lv_registro.setAdapter(adaptador);
@@ -47,9 +50,18 @@ public class ListaRegistro extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String ts = listaRegistros.get(i).getTimestamp().toString();
                 borrarRegistro(ts);
-
             }
         });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void borrarRegistro(String ts) {
