@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".DatosRendimiento"></activity>
+        <activity android:name=".ListaRegistro"></activity>
+        <activity android:name=".DatosRendimiento" />
         <activity
             android:name=".MainActivity"
             android:label="@string/application_name">

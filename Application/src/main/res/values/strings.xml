@@ -30,6 +30,7 @@
     <string name="fingerprint_hint">Touch sensor</string>
     <string name="password_description">Enter your store password to continue</string>
     <string name="propietario">Propietario</string>
+    <string name="detalle_registros">Mostrar detalle</string>
     <string name="usuario_ext">Usuario externo</string>
     <string name="datos_rendimiento">Datos de rendimiento</string>
     <string name="borrar_registro">Borrar ultimo registro</string>

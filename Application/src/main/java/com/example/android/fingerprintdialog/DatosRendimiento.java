@@ -1,7 +1,10 @@
 package com.example.android.fingerprintdialog;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -10,6 +13,8 @@ public class DatosRendimiento extends AppCompatActivity {
 
     TextView tv_total, tv_numFP, tv_numFN, tv_numErr, tv_FRR, tv_FAR, tv_FTA;
     Float fta, frr, far;
+
+    Button btn_listaRegistros;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +30,20 @@ public class DatosRendimiento extends AppCompatActivity {
         tv_FTA = (TextView)findViewById(R.id.tv_fta);
 
         actualizarDatos();
+
+        btn_listaRegistros = (Button)findViewById(R.id.btn_lista_registros);
+
+        btn_listaRegistros.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mostrarActivityListaRegistros();
+            }
+        });
+    }
+
+    private void mostrarActivityListaRegistros() {
+        Intent i = new Intent(this, ListaRegistro.class);
+        startActivity(i);
     }
 
     @Override
